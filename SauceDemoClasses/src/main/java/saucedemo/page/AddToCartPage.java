@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -38,14 +39,17 @@ public class AddToCartPage extends BaseClass {
 	@FindBy(xpath="//div[@class='inventory_item_name']")
 	public WebElement productname;
 	
-
-	public AddToCartPage() {
-		PageFactory.initElements(driver, this);
-	}
-
-
+	@FindBy(xpath="//button[contains(text(),'Remove')]")
+	public WebElement Rembtn;
+	
+	
+	/*
+	 * Add the single product according to the user selection on the "no" variable
+	 * validate the product added in the cart had the same name of the product selected on the listing page
+	 */
+	
+	
 	public void addSingleProduct(int no) {
-		AddToCartPage ac = new AddToCartPage();
 
 		try {
 			producttitle = driver.findElement(By.xpath("(//div[@class='inventory_item_name'])[" + no + "]")).getText();
@@ -63,35 +67,28 @@ public class AddToCartPage extends BaseClass {
 		}
 
 	}
+	
+	/*
+	 * Add the total no.of.product "n" to the cart and
+	 * 	validate the product added in the cart had the same name of the product selected on the listing page
+	 */
+	
+	
 
-	public void addMultipleProduct(int[] products) throws IOException, InterruptedException {
-		AddToCartPage ac = new AddToCartPage();
+	public void addMultipleProduct(int n) throws IOException, InterruptedException {
 		WebElement addtocartbtn;
 		List<String> itemnames = new ArrayList<String>();
 		List<String> cartnames = new ArrayList<String>();
+		for (int i = 1; i <= n; i++) {
 
-		System.out.println("size of--" + products.length);
-		for (int i = 0; i < products.length; i++) {
-			System.out.println("i value--" + products[i]);
-
-			itemnames.add(driver.findElement(By.xpath("(//div[@class='inventory_item_name'])[" + products[i] + "]"))
+			itemnames.add(driver.findElement(By.xpath("(//div[@class='inventory_item_name'])[" + i + "]"))
 					.getText());
-			System.out.println("products[i]--" + products[i]);
-			System.out.println("itemnames--" + itemnames);
-			if (i == 0) {
-				addtocartbtn = driver
-						.findElement(By.xpath("(//button[contains(text(),'Add to cart')])[" + products[i] + "]"));
-				utils.clickAction(addtocartbtn);
-			} else if (i > 0) {
-				int minusaddtocart = (products[i] - 1);
-				System.out.println("minusaddtocart--" + minusaddtocart);
-				addtocartbtn = driver
-						.findElement(By.xpath("(//button[contains(text(),'Add to cart')])[" + minusaddtocart + "]"));
-				Thread.sleep(1000);
-				utils.clickAction(addtocartbtn);
-			}
+			addtocartbtn = driver
+					.findElement(By.xpath("(//button[contains(text(),'Add to cart')])[1]"));
+			utils.clickAction(addtocartbtn);
 
 		}
+		
 		utils.clickAction(ac.cartlink);
 
 		int cartsize = driver.findElements(By.xpath("//div[@class='cart_item']")).size();
@@ -104,5 +101,34 @@ public class AddToCartPage extends BaseClass {
 		System.out.println("itemnames--" + itemnames);
 		Assert.assertTrue(itemnames.equals(cartnames));
 	}
+	
+	/*
+	 * Reset the state of the product - By removing the product if anything previously added
+	 */
+	
+	public void resetAppState() {
+		try {
+			if(ac.Removebutton.size() >= 1) {
+				
+			for(WebElement removebtn : ac.Removebutton) {
+				
+					utils.clickAction(removebtn);
+				}
+		}
+			else {
+				System.out.println("There are no products added before");
+			}
+		
+		}catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		
+		
+		
+	}
+	
+	
 
-}
+
