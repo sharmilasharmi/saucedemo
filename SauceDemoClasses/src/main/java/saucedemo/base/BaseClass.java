@@ -93,6 +93,7 @@ public class BaseClass {
 	@AfterClass()
 	public void closeBrowser() {
 		driver.quit();
+		System.out.println("driver closed");
 		
 	}
 
